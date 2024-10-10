@@ -9,7 +9,7 @@ const PORT = 3000;
 // Middleware to parse form data
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Serve static files (like your HTML form)
+// Serve static files
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Use survey routes

@@ -104,7 +104,7 @@ else:
 # Create the main window
 root = tk.Tk()
 root.attributes('-fullscreen', True)
-root.state('zoomed')  # Maximize the window (Windows-specific)
+root.state('zoomed')  # Maximize the window
 root.configure(bg='white')
 
 # Get the local IP address
