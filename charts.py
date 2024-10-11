@@ -1,5 +1,4 @@
 import tkinter as tk
-from tkinter import ttk
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -14,13 +13,11 @@ import time
 # Global variable to store the server process
 server_process = None
 
-
 # Function to get the local IP address
 def get_local_ip():
     hostname = socket.gethostname()
     local_ip = socket.gethostbyname(hostname)
     return local_ip
-
 
 # Function to count entries in the CSV file
 def count_entries():
@@ -28,7 +25,6 @@ def count_entries():
         df = pd.read_csv("./output/survey_results.csv", header=None)
         return len(df)
     return 0
-
 
 # Function to update the charts
 def update_charts():
@@ -48,39 +44,17 @@ def update_charts():
             ax.clear()
 
         # Plot pie chart for genres
-        genre_counts.plot.pie(
-            autopct="%1.1f%%", startangle=140, cmap="tab20", ax=axes[0]
-        )
-        axes[0].set_title("Favorite Music Genres", fontsize=24)
-        axes[0].set_ylabel("")  # Hide the y-label
+        genre_counts.plot.pie(autopct='%1.1f%%', startangle=140, ax=axes[0])
+        axes[0].set_title('Favorite Music Genres')
 
         # Plot bar chart for listening time
-        listening_time_counts.plot.bar(color="skyblue", ax=axes[1])
-        axes[1].set_title("Listening Time per Day", fontsize=24)
-        axes[1].set_xlabel("Listening Time (hours)", fontsize=18)
-        axes[1].set_ylabel("Number of Responses", fontsize=18)
-        axes[1].set_xticks(range(len(listening_time_counts)))
-        axes[1].set_xticklabels(listening_time_counts.index, rotation=0, fontsize=12)
+        listening_time_counts.plot.bar(ax=axes[1])
+        axes[1].set_title('Listening Time per Day')
+        axes[1].set_xlabel('Listening Time (hours)')
+        axes[1].set_ylabel('Number of Responses')
 
         # Draw the updated plots
         canvas.draw()
-
-    # Update the counter
-    counter_label.config(text=f"Submissions: {count_entries()}")
-
-    # Schedule the next update
-    if root.winfo_exists():
-        root.after(1000, update_charts)
-
-
-# Function to close the window
-def close_window(event=None):
-    global server_process
-    root.destroy()
-    if server_process:
-        server_process.terminate()  # Terminate the server process when closing the window
-        server_process.wait()  # Wait for the process to terminate
-
 
 # Function to check if a port is in use
 def is_port_in_use(port):
@@ -89,13 +63,11 @@ def is_port_in_use(port):
             return True
     return False
 
-
 # Function to kill processes using port 3000
 def kill_port_3000_processes():
     command = "for /f \"tokens=5\" %a in ('netstat -aon ^| findstr :3000') do taskkill /f /pid %a"
     for _ in range(2):  # Run the command twice
         subprocess.run(command, shell=True)
-
 
 # Kill processes using port 3000
 kill_port_3000_processes()
@@ -108,7 +80,7 @@ else:
     # Start the Node.js server
     try:
         server_process = subprocess.Popen(
-            ["node", "server.js"], cwd=os.path.dirname(os.path.abspath("server.js"))
+            ["node", "server.cjs"], cwd=os.path.dirname(os.path.abspath("server.cjs"))
         )
     except Exception as e:
         print(f"An error occurred while starting the server: {e}")
@@ -127,60 +99,44 @@ local_ip = get_local_ip()
 ip_frame = tk.Frame(root, bg="white")
 ip_frame.pack(pady=30)
 
-# Create and place the IP address label
-ip_label = tk.Label(
-    ip_frame,
-    text=f"Everyone please do the survey at: http://{local_ip}:3000 OR scan this QR Code",
-    font=("Helvetica", 36),
-    fg="black",
-    bg="white",
-)
-ip_label.pack(side=tk.LEFT, padx=15)
+# Add the IP address label to the frame
+ip_label = tk.Label(ip_frame, text=f"Local IP: {local_ip}", font=("Helvetica", 24), bg="white")
+ip_label.pack(pady=10)
 
-# Generate QR code for the survey URL
-qr = qrcode.QRCode(
-    version=1,
-    error_correction=qrcode.constants.ERROR_CORRECT_L,
-    box_size=15,
-    border=6,
-)
+# Generate and display the QR code
+qr = qrcode.QRCode(version=1, box_size=10, border=5)
 qr.add_data(f"http://{local_ip}:3000")
 qr.make(fit=True)
-qr_img = qr.make_image(fill="black", back_color="white")
-qr_img = qr_img.resize(
-    (300, 300), Image.LANCZOS
-)  # Use Image.LANCZOS instead of Image.ANTIALIAS
-qr_img_tk = ImageTk.PhotoImage(qr_img)
+qr_img = qr.make_image(fill='black', back_color='white')
+qr_img = qr_img.resize((200, 200), Image.LANCZOS)  # Use Image.LANCZOS instead of Image.ANTIALIAS
+qr_photo = ImageTk.PhotoImage(qr_img)
+qr_label = tk.Label(ip_frame, image=qr_photo, bg="white")
+qr_label.pack(pady=10)
 
-# Create and place the QR code label
-qr_label = tk.Label(ip_frame, image=qr_img_tk, bg="white")
-qr_label.pack(side=tk.LEFT, padx=15)
-
-# Create and place the counter label at the top
-counter_label = tk.Label(
-    root,
-    text=f"Submissions: {count_entries()}",
-    font=("Helvetica", 36),
-    fg="black",
-    bg="white",
-)
-counter_label.pack(side=tk.TOP, anchor="n", padx=30, pady=30)
+# Create a frame to hold the charts
+chart_frame = tk.Frame(root, bg="white")
+chart_frame.pack(pady=30)
 
 # Create a figure for the charts
-fig, axes = plt.subplots(1, 2, figsize=(26.25, 11.25))  # Increased by 25%
+fig, axes = plt.subplots(1, 2, figsize=(12, 6))
 
-# Embed the figure in the tkinter window
-canvas = FigureCanvasTkAgg(fig, master=root)
-canvas.get_tk_widget().pack(pady=30)
+# Create a canvas to display the figure
+canvas = FigureCanvasTkAgg(fig, master=chart_frame)
+canvas.get_tk_widget().pack()
 
-# Bind the spacebar key to run the charting software
-root.bind("<space>", lambda event: update_charts())
-
-# Bind the Escape key to close the window
-root.bind("<Escape>", close_window)
-
-# Start the initial chart update
+# Update the charts initially
 update_charts()
 
-# Run the main loop
+# Schedule the chart updates
+def refresh_charts():
+    update_charts()
+    root.after(5000, refresh_charts)  # Refresh every 5 seconds
+
+refresh_charts()
+
+# Start the Tkinter main loop
 root.mainloop()
+
+# Terminate the server process when the Tkinter window is closed
+if server_process:
+    server_process.terminate()
