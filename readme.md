@@ -13,7 +13,7 @@ This project is a survey site designed to collect and visualize survey data. It 
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/yourusername/survey-site.git
+    git clone https://github.com/SaladStik/Simple-Survey-Site-With-Charting-Software.git
     ```
 2. Navigate to the project directory:
     ```bash
