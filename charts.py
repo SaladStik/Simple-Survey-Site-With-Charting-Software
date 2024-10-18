@@ -80,7 +80,7 @@ else:
     # Start the Node.js server
     try:
         server_process = subprocess.Popen(
-            ["node", "server.cjs"], cwd=os.path.dirname(os.path.abspath("server.cjs"))
+            ["node", "server.js"], cwd=os.path.dirname(os.path.abspath("server.js"))
         )
     except Exception as e:
         print(f"An error occurred while starting the server: {e}")

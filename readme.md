@@ -1,7 +1,37 @@
-This is a simple software that will start a webserver that relays all data to a csv that can be easily read by the charting software which updates in realtime to show the results of your survey, useful for presentations
+## Overview
 
+This project is a survey site designed to collect and visualize survey data. It is built with customization in mind, allowing users to easily adapt it to their specific needs.
 
-should be easily customizable.
+## Features
 
+- User-friendly interface for survey creation and participation
+- Real-time data visualization
+- Customizable survey templates
+- Secure data storage
 
-the entire process can be started by running charts.py
+## Getting Started
+
+1. Clone the repository:
+    ```bash
+    git clone https://github.com/yourusername/survey-site.git
+    ```
+2. Navigate to the project directory:
+    ```bash
+    cd survey-site
+    ```
+3. Install the required dependencies:
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+## Usage
+
+To start the survey site, run the following command:
+```bash
+python app.py
+```
+
+To generate and visualize charts from the survey data, run:
+```bash
+python charts.py
+```
